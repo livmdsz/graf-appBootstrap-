@@ -1,86 +1,644 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador RGB</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>NOIRÉ | Perfilador de Personajes</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons: biblioteca de iconos para el logo e interfaz -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Favicon / icono de la pestaña -->
+    <link rel="icon" type="image/svg+xml"
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23171a1f'/%3E%3Cpath d='M16 45 32 13l16 32-7-4-9 9-9-9-7 4Z' fill='none' stroke='%23d7c7a8' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+    <style>
+        :root {
+            --noire-dark: #171a1f;
+            --noire-dark-2: #22262d;
+            --noire-light: #f4f2ee;
+            --noire-card: #ffffff;
+            --noire-gold: #b9a47a;
+            --noire-muted: #73777e;
+            --noire-border: #dedbd5;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(185,164,122,.10), transparent 28%),
+                radial-gradient(circle at 85% 80%, rgba(255,255,255,.05), transparent 30%),
+                var(--noire-light);
+            color: var(--noire-dark);
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+
+        /* Encabezado */
+        .navbar-noire {
+            background: rgba(23, 26, 31, .97);
+            border-bottom: 1px solid rgba(185,164,122,.30);
+            box-shadow: 0 8px 25px rgba(0,0,0,.12);
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--noire-gold);
+            border-radius: 12px;
+            color: var(--noire-gold);
+            font-size: 1.35rem;
+        }
+
+        .brand-name {
+            letter-spacing: .22em;
+            font-weight: 700;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 72px 0 38px;
+            text-align: center;
+        }
+
+        .eyebrow {
+            color: var(--noire-gold);
+            letter-spacing: .28em;
+            font-size: .76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 700;
+            letter-spacing: -.03em;
+        }
+
+        .hero p {
+            max-width: 680px;
+            margin: 16px auto 0;
+            color: var(--noire-muted);
+            line-height: 1.8;
+        }
+
+        /* Visor */
+        .profile-section {
+            padding-bottom: 75px;
+        }
+
+        .profile-carousel {
+            max-width: 920px;
+            margin: auto;
+        }
+
+        .profile-card {
+            background: var(--noire-card);
+            border: 1px solid var(--noire-border);
+            border-radius: 28px;
+            overflow: hidden;
+            min-height: 540px;
+            box-shadow: 0 25px 60px rgba(25, 28, 33, .12);
+            cursor: pointer;
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 70px rgba(25, 28, 33, .18);
+        }
+
+        .profile-photo-wrap {
+            position: relative;
+            height: 315px;
+            overflow: hidden;
+            background: #ddd;
+        }
+
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform .45s ease;
+        }
+
+        .profile-card:hover .profile-photo {
+            transform: scale(1.04);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            inset: auto 0 0 0;
+            padding: 45px 28px 20px;
+            color: white;
+            background: linear-gradient(transparent, rgba(0,0,0,.75));
+        }
+
+        .profile-number {
+            font-size: .75rem;
+            letter-spacing: .2em;
+            opacity: .8;
+        }
+
+        .profile-content {
+            padding: 28px 32px 32px;
+        }
+
+        .profile-content h2 {
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .profile-type {
+            color: var(--noire-gold);
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .profile-description {
+            color: var(--noire-muted);
+            line-height: 1.7;
+            margin: 15px 0 20px;
+        }
+
+        .view-profile {
+            color: var(--noire-dark);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .view-profile i {
+            color: var(--noire-gold);
+            margin-left: 5px;
+        }
+
+        /* Controles del carousel */
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 52px;
+            height: 52px;
+            top: 47%;
+            transform: translateY(-50%);
+            border-radius: 50%;
+            background: var(--noire-dark);
+            opacity: 1;
+        }
+
+        .carousel-control-prev {
+            left: -75px;
+        }
+
+        .carousel-control-next {
+            right: -75px;
+        }
+
+        .carousel-indicators {
+            position: static;
+            margin: 25px 0 0;
+        }
+
+        .carousel-indicators [data-bs-target] {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: 0;
+            background-color: #aaa;
+        }
+
+        .carousel-indicators .active {
+            background-color: var(--noire-dark);
+        }
+
+        /* Modal */
+        .modal-content {
+            border: 0;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 90px rgba(0,0,0,.25);
+        }
+
+        .modal-header {
+            background: var(--noire-dark);
+            color: white;
+            border: 0;
+            padding: 20px 25px;
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .modal-photo {
+            width: 170px;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 20px;
+            border: 1px solid var(--noire-border);
+        }
+
+        .detail-label {
+            color: var(--noire-gold);
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .detail-text {
+            color: #555a61;
+            line-height: 1.75;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--noire-dark);
+            color: #e8e6e1;
+            border-top: 1px solid rgba(185,164,122,.3);
+        }
+
+        .footer-title {
+            color: var(--noire-gold);
+            letter-spacing: .12em;
+            font-size: .76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .footer-item {
+            color: #d0cfd0;
+            margin-bottom: 7px;
+        }
+
+        .footer-item strong {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,.10);
+            color: #92969d;
+            font-size: .85rem;
+        }
+
+        @media (max-width: 1100px) {
+            .carousel-control-prev { left: 10px; }
+            .carousel-control-next { right: 10px; }
+        }
+
+        @media (max-width: 576px) {
+            .hero {
+                padding-top: 48px;
+            }
+
+            .profile-card {
+                min-height: 500px;
+            }
+
+            .profile-photo-wrap {
+                height: 270px;
+            }
+
+            .profile-content {
+                padding: 23px;
+            }
+
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 42px;
+                height: 42px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
 
-        <div class="row mt-4">
-            <div class="col-md-12 bg-primary text-white text-center">
-                <br>
-                <h1><b>Profile Card Design</b></h1>
-                <br>
-            </div>
+    <!-- ENCABEZADO -->
+    <nav class="navbar navbar-dark navbar-noire">
+        <div class="container py-2">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="#">
+                <span class="brand-mark">
+                    <i class="bi bi-gem"></i>
+                </span>
+                <span class="brand-name">NOIRÉ</span>
+            </a>
+
+            <span class="text-secondary d-none d-md-inline small">
+                <i class="bi bi-collection me-2"></i>Perfilador de personajes
+            </span>
         </div>
+    </nav>
 
-        <div class="row" style="background-color: #e3e3e3;">
-            <div class="col-md-12 py-4">
-                <div class="row justify-content-around">
+    <!-- PRESENTACIÓN -->
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="eyebrow mb-3">Character Archive</div>
+                <h1>Personajes seleccionados</h1>
+                <p>
+                    Explora cada perfil individualmente. Selecciona una tarjeta para
+                    consultar la información del personaje en una ficha detallada.
+                </p>
+            </div>
+        </section>
 
-                    <!-- TARJETA 1 -->
-                    <div class="col-md-3 text-center shadow-lg" style="background-color: #f3f3f3; border-radius: 20px;">
-                        <img src="assets/img/newuser1.jfif" alt="Person One" class="img-fluid rounded-circle mt-4" style="width: 150px; height: 150px;">
-                        <br><br>
-                        <label class="form-label">
-                            <b>Person One</b>
-                            <br><br>
-                            Esta es la persona número uno, para revisar la tarjeta de información
-                            y la foto del mismo. Revisar el uso de estilos en CSS y las imagenes
-                            <b>favicon.</b>
-                        </label>
-                        <br><br>
-                        <img src="assets/img/redes.jpg" alt="Redes Sociales" style="width: 140px; height: 40px;">
+        <!-- VISUALIZACIÓN DE UNA TARJETA A LA VEZ -->
+        <section class="profile-section">
+            <div class="container">
+                <div id="profileCarousel" class="carousel slide profile-carousel" data-bs-interval="false">
+
+                    <div class="carousel-inner">
+
+                        <!-- PERSONA 1 -->
+                        <div class="carousel-item active">
+                            <article class="profile-card" data-bs-toggle="modal" data-bs-target="#profileModal"
+                                     onclick="showProfile(0)">
+                                <div class="profile-photo-wrap">
+                                    <img src="assets/img/newuser1.jfif"
+                                         class="profile-photo"
+                                         alt="Toji Fushiguro">
+                                    <div class="photo-overlay">
+                                        <div class="profile-number">01 / 03</div>
+                                    </div>
+                                </div>
+
+                                <div class="profile-content">
+                                    <div class="profile-type">Personaje 01</div>
+                                    <h2>Toji Fushiguro</h2>
+                                    <p class="profile-description">
+                                        Un combatiente de presencia imponente, reconocido por
+                                        su fuerza física, precisión y estilo directo.
+                                    </p>
+                                    <span class="view-profile">
+                                        Ver información <i class="bi bi-arrow-right"></i>
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+
+                        <!-- PERSONA 2 -->
+                        <div class="carousel-item">
+                            <article class="profile-card" data-bs-toggle="modal" data-bs-target="#profileModal"
+                                     onclick="showProfile(1)">
+                                <div class="profile-photo-wrap">
+                                    <img src="assets/img/newuser2.jfif"
+                                         class="profile-photo"
+                                         alt="Kwon Taek Joo">
+                                    <div class="photo-overlay">
+                                        <div class="profile-number">02 / 03</div>
+                                    </div>
+                                </div>
+
+                                <div class="profile-content">
+                                    <div class="profile-type">Personaje 02</div>
+                                    <h2>Kwon Taek Joo</h2>
+                                    <p class="profile-description">
+                                        Un personaje asociado a un ambiente de espionaje,
+                                        peligro y operaciones de alto riesgo.
+                                    </p>
+                                    <span class="view-profile">
+                                        Ver información <i class="bi bi-arrow-right"></i>
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+
+                        <!-- PERSONA 3 -->
+                        <div class="carousel-item">
+                            <article class="profile-card" data-bs-toggle="modal" data-bs-target="#profileModal"
+                                     onclick="showProfile(2)">
+                                <div class="profile-photo-wrap">
+                                    <img src="assets/img/newuser3.jfif"
+                                         class="profile-photo"
+                                         alt="Ilay Riegrow">
+                                    <div class="photo-overlay">
+                                        <div class="profile-number">03 / 03</div>
+                                    </div>
+                                </div>
+
+                                <div class="profile-content">
+                                    <div class="profile-type">Personaje 03</div>
+                                    <h2>Ilay Riegrow</h2>
+                                    <p class="profile-description">
+                                        Una figura de carácter dominante y personalidad
+                                        compleja, vinculada a un entorno de tensión y peligro.
+                                    </p>
+                                    <span class="view-profile">
+                                        Ver información <i class="bi bi-arrow-right"></i>
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+
                     </div>
 
-                    <!-- TARJETA 2 -->
-                    <div class="col-md-3 text-center shadow-lg" style="background-color: #f3f3f3; border-radius: 20px;">
-                        <img src="assets/img/newuser2.jfif" alt="Person Two" class="img-fluid rounded-circle mt-4" style="width: 150px; height: 150px;">
-                        <br><br>
-                        <label class="form-label">
-                            <b>Person Two</b>
-                            <br><br>
-                            Esta es la persona número uno, para revisar la tarjeta de información
-                            y la foto del mismo. Revisar el uso de estilos en CSS y las imagenes
-                            <b>favicon.</b>
-                        </label>
-                        <br><br>
-                        <img src="assets/img/redes.jpg" alt="Redes Sociales" style="width: 140px; height: 40px;">
-                    </div>
+                    <!-- BOTONES ANTERIOR / SIGUIENTE -->
+                    <button class="carousel-control-prev" type="button"
+                            data-bs-target="#profileCarousel" data-bs-slide="prev"
+                            aria-label="Perfil anterior">
+                        <i class="bi bi-chevron-left fs-4"></i>
+                    </button>
 
-                    <!-- TARJETA 3 -->
-                    <div class="col-md-3 text-center shadow-lg" style="background-color: #f3f3f3; border-radius: 20px;">
-                        <img src="assets/img/newuser3.jfif" alt="Person Three" class="img-fluid rounded-circle mt-4" style="width: 150px; height: 150px;">
-                        <br><br>
-                        <label class="form-label">
-                            <b>Person Three</b>
-                            <br><br>
-                            Esta es la persona número uno, para revisar la tarjeta de información
-                            y la foto del mismo. Revisar el uso de estilos en CSS y las imagenes
-                            <b>favicon.</b>
-                        </label>
-                        <br><br>
-                        <img src="assets/img/redes.jpg" alt="Redes Sociales" style="width: 140px; height: 40px;">
+                    <button class="carousel-control-next" type="button"
+                            data-bs-target="#profileCarousel" data-bs-slide="next"
+                            aria-label="Perfil siguiente">
+                        <i class="bi bi-chevron-right fs-4"></i>
+                    </button>
+
+                    <!-- INDICADORES -->
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#profileCarousel" data-bs-slide-to="0"
+                                class="active" aria-current="true" aria-label="Toji Fushiguro"></button>
+                        <button type="button" data-bs-target="#profileCarousel" data-bs-slide-to="1"
+                                aria-label="Kwon Taek Joo"></button>
+                        <button type="button" data-bs-target="#profileCarousel" data-bs-slide-to="2"
+                                aria-label="Ilay Riegrow"></button>
                     </div>
 
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
 
-        <div class="row">
-            <div class="col-md-12 bg-secondary text-white text-center">
-                <br>
-                <h2>HTML CSS BOOTSTRAP</h2>
-                <br>
+    <!-- MODAL DE INFORMACIÓN -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <div class="small text-uppercase text-secondary-emphasis" id="modalNumber"></div>
+                        <h3 class="modal-title mb-0" id="profileModalLabel">Información</h3>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-4 text-center">
+                            <img id="modalImage" src="" alt="" class="modal-photo">
+                        </div>
+
+                        <div class="col-md-8">
+                            <div class="detail-label">Nombre</div>
+                            <h2 id="modalName" class="mb-3"></h2>
+
+                            <div class="detail-label">Descripción</div>
+                            <p id="modalDescription" class="detail-text"></p>
+
+                            <div class="row mt-4">
+                                <div class="col-sm-6">
+                                    <div class="detail-label">Perfil</div>
+                                    <p id="modalProfile" class="detail-text"></p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="detail-label">Universo / obra</div>
+                                    <p id="modalOrigin" class="detail-text"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="brand-mark">
+                            <i class="bi bi-gem"></i>
+                        </span>
+                        <span class="brand-name">NOIRÉ</span>
+                    </div>
+                    <p class="text-secondary mb-0">
+                        Proyecto académico de diseño web utilizando HTML, CSS y Bootstrap.
+                    </p>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="footer-title mb-3">Datos del creador</div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p class="footer-item">
+                                <i class="bi bi-person me-2"></i>
+                                <strong>Nombre:</strong> Itzel Mendoza Sánchez
+                            </p>
+                            <p class="footer-item">
+                                <i class="bi bi-card-text me-2"></i>
+                                <strong>No. de control:</strong> 26201715
+                            </p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <p class="footer-item">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                <strong>Fecha:</strong> <span id="currentDate"></span>
+                            </p>
+                            <p class="footer-item">
+                                <i class="bi bi-book me-2"></i>
+                                <strong>Materia:</strong> Graficación
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="footer-item mb-0">
+                        <i class="bi bi-building me-2"></i>
+                        <strong>Escuela:</strong>
+                        Tecnológico Nacional de México, Campus: Instituto Tecnológico de Pachuca
+                    </p>
+                </div>
             </div>
         </div>
 
-    </div>
-</body>
+        <div class="footer-bottom text-center py-3">
+            © <span id="copyrightYear"></span> Itzel Mendoza Sánchez · Todos los derechos reservados.
+        </div>
+    </footer>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Información de los tres perfiles.
+        const profiles = [
+            {
+                name: "Toji Fushiguro",
+                image: "assets/img/newuser1.jfif",
+                number: "PERSONAJE 01",
+                description:
+                    "Toji Fushiguro es un personaje de Jujutsu Kaisen conocido por su excepcional capacidad física, su experiencia como combatiente y su enfoque pragmático ante el peligro.",
+                profile: "Combatiente / antagonista",
+                origin: "Jujutsu Kaisen"
+            },
+            {
+                name: "Kwon Taek Joo",
+                image: "assets/img/newuser2.jfif",
+                number: "PERSONAJE 02",
+                description:
+                    "Kwon Taek Joo es un personaje relacionado con un escenario de espionaje internacional, operaciones encubiertas y situaciones en las que debe enfrentarse a circunstancias de alto riesgo.",
+                profile: "Agente / protagonista",
+                origin: "Codename: Anastasia"
+            },
+            {
+                name: "Ilay Riegrow",
+                image: "assets/img/newuser3.jfif",
+                number: "PERSONAJE 03",
+                description:
+                    "Ilay Riegrow destaca por su personalidad dominante, su actitud calculadora y la tensión que genera en las relaciones que establece con otros personajes.",
+                profile: "Personaje / figura de poder",
+                origin: "PASSION"
+            }
+        ];
+
+        // Abre la ficha correspondiente a la tarjeta seleccionada.
+        function showProfile(index) {
+            const profile = profiles[index];
+
+            document.getElementById("modalNumber").textContent = profile.number;
+            document.getElementById("profileModalLabel").textContent = profile.name;
+            document.getElementById("modalName").textContent = profile.name;
+            document.getElementById("modalImage").src = profile.image;
+            document.getElementById("modalImage").alt = profile.name;
+            document.getElementById("modalDescription").textContent = profile.description;
+            document.getElementById("modalProfile").textContent = profile.profile;
+            document.getElementById("modalOrigin").textContent = profile.origin;
+        }
+
+        // Fecha que se actualiza automáticamente cada vez que se abre/carga el sitio.
+        function updateDate() {
+            const now = new Date();
+
+            const date = now.toLocaleDateString("es-MX", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            });
+
+            document.getElementById("currentDate").textContent = date;
+            document.getElementById("copyrightYear").textContent = now.getFullYear();
+        }
+
+        // Ejecutar al abrir el sitio.
+        document.addEventListener("DOMContentLoaded", updateDate);
+    </script>
+
+</body>
 </html>
